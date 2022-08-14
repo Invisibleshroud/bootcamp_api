@@ -8,28 +8,21 @@ const Bootcamp = require('../models/Bootcamp');
 // @route       GET /API/v1/bootcamps/:bootcampId/courses
 // @access      Public
 exports.getCourses = asyncHandler(async (req, res, next) => {
-  let query;
   if (req.params.bootcampId) {
-    query = Course.find({ bootcamp: req.params.bootcampId });
+    const courses = Course.find({ bootcamp: req.params.bootcampId });
+    return res
+      .status(200)
+      .json({ success: true, count: courses.length, data: courses });
   } else {
-    query = Course.find().populate({
-      path: 'bootcamp',
-      select: 'name description',
-    });
+    return res.status(200).json(res.advancedResults);
   }
-  const courses = await query;
-
-  res.status(200).json({ success: true, count: courses.length, data: courses });
 });
 
 // @desc        Get single course
 // @route       GET /API/v1/courses/:id
 // @access      Public
 exports.getCourse = asyncHandler(async (req, res, next) => {
-  const course = await Course.findById(req.params.id).populate({
-    path: 'bootcamp',
-    select: 'name description',
-  });
+  const course = await Course.findById(req.params.id).populate();
   if (!course) {
     next(new ErrorResponse(`No course with the id of ${req.params.id}`), 404);
   }
