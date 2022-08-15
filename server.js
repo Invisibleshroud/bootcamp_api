@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
+const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
@@ -59,8 +60,10 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Prevent HTTP param pollution
-app.use(hpp());
+app.use(cors());
 
+// Enable CORS
+app.use(hpp());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
